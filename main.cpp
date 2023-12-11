@@ -134,8 +134,7 @@ int main() {
 
     // Ensure the number is unique
     do {
-      std::cout << "Enter player number: ";
-      std::cin >> number;
+      number = getNumber();
     } while (Player::playerExists(players, number));
 
     std::cout << "Enter player surname: ";
@@ -144,13 +143,10 @@ int main() {
     std::cout << "Enter player first name: ";
     std::cin >> firstName;
 
-    std::cout << "Enter player height (in cm): ";
     height = getHeight();
 
-    std::cout << "Enter player weight (in kg): ";
     weight = getWeight();
 
-    std::cout << "Enter player year of birth: ";
     yearOfBirth = getYearOfBirth();
 
     auto player = std::make_shared<Player>(number, surname, firstName, height,
@@ -238,7 +234,6 @@ int main() {
     std::cout << "3. Output all players\n";
     std::cout << "4. Output winner\n";
     std::cout << "5. Exit\n";
-    std::cout << "Enter your choice: ";
 
     choice = getChoice();
 
