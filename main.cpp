@@ -1,91 +1,167 @@
-#include <iostream>
-#include <vector>
 #include <algorithm>
+#include <vector>
+#include <limits>
 
-class Player {
-public:
-    Player(int number, std::string surname, std::string firstName, int height, int weight, int yearOfBirth)
-        : number(number), surname(surname), firstName(firstName), height(height), weight(weight),
-          points(0), yearOfBirth(yearOfBirth), fightsWon(0), fightsTied(0), fightsLost(0) {}
+#include "Player/Player.h"
 
-    bool operator>=(const Player& other) const {
-        return (height >= other.height) && (weight >= other.weight);
+int getChoice() {
+  int choice;
+  while (true) {
+    std::cout << "Enter your choice: ";
+    try {
+      std::cin >> choice;
+
+      // Check if the input was successful
+      if (std::cin.fail()) {
+        // Clear the error flag
+        std::cin.clear();
+
+        // Ignore invalid input up to the newline character
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
+        throw std::runtime_error(
+            "Invalid input. Please enter a valid integer.");
+      }
+
+      // Check if the entered value is within the expected range
+      if (choice < 1 || choice > 5) {
+        throw std::out_of_range(
+            "Invalid choice. Please enter a number between 1 and 5.");
+      }
+
+      break; // Input is valid, exit the loop
+    } catch (const std::exception &e) {
+      std::cerr << "Error: " << e.what() << std::endl;
     }
-
-    friend std::ostream& operator<<(std::ostream& os, const Player& player);
-
-    int getNumber() const {
-        return number;
-    }
-
-    std::string getSurname() const {
-        return surname;
-    }
-
-    std::string getFirstName() const {
-        return firstName;
-    }
-
-    int getHeight() const {
-        return height;
-    }
-
-    int getWeight() const {
-        return weight;
-    }
-
-    int getPoints() const {
-        return points;
-    }
-
-    int getYearOfBirth() const {
-        return yearOfBirth;
-    }
-
-    int getFightsWon() const {
-        return fightsWon;
-    }
-
-    int getFightsTied() const {
-        return fightsTied;
-    }
-
-    int getFightsLost() const {
-        return fightsLost;
-    }
-
-    void updatePoints(int result) {
-        points += result;
-        if (result == 10) {
-            fightsWon++;
-        } else if (result == 5) {
-            fightsTied++;
-        } else {
-            fightsLost++;
-        }
-    }
-
-private:
-    int number;
-    std::string surname;
-    std::string firstName;
-    int height;
-    int weight;
-    int points;
-    int yearOfBirth;
-    int fightsWon;
-    int fightsTied;
-    int fightsLost;
-};
-
-std::ostream& operator<<(std::ostream& os, const Player& player) {
-    os << player.getFirstName() << " " << player.getSurname() << ", " << player.getYearOfBirth() << ", "
-       << player.getHeight() << "cm, " << player.getWeight() << "kg, participated in " << (player.getFightsWon() + player.getFightsTied() + player.getFightsLost())
-       << " combat games: " << player.getFightsWon() << " x won, " << player.getFightsTied() << " x tie = " << player.getPoints() << " points";
-    return os;
+  }
+  return choice;
 }
 
-void manageCombatGame(std::vector<Player*>& players) {
+int getNumber() {
+  int number;
+  while (true) {
+    std::cout << "Enter player number: ";
+    try {
+      std::cin >> number;
+
+      if (std::cin.fail()) {
+        std::cin.clear();
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        throw std::runtime_error(
+            "Invalid input. Please enter a valid integer.");
+      }
+
+      break;
+    } catch (const std::exception &e) {
+      std::cerr << "Error: " << e.what() << std::endl;
+    }
+  }
+  return number;
+}
+
+int getHeight() {
+  int height;
+  while (true) {
+    std::cout << "Enter player height (in cm): ";
+    try {
+      std::cin >> height;
+
+      if (std::cin.fail()) {
+        std::cin.clear();
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        throw std::runtime_error(
+            "Invalid input. Please enter a valid integer for height.");
+      }
+
+      break;
+    } catch (const std::exception &e) {
+      std::cerr << "Error: " << e.what() << std::endl;
+    }
+  }
+  return height;
+}
+
+int getWeight() {
+  int weight;
+  while (true) {
+    std::cout << "Enter player weight (in kg): ";
+    try {
+      std::cin >> weight;
+
+      if (std::cin.fail()) {
+        std::cin.clear();
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        throw std::runtime_error(
+            "Invalid input. Please enter a valid integer for weight.");
+      }
+
+      break;
+    } catch (const std::exception &e) {
+      std::cerr << "Error: " << e.what() << std::endl;
+    }
+  }
+  return weight;
+}
+
+int getYearOfBirth() {
+  int yearOfBirth;
+  while (true) {
+    std::cout << "Enter player year of birth: ";
+    try {
+      std::cin >> yearOfBirth;
+
+      if (std::cin.fail()) {
+        std::cin.clear();
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        throw std::runtime_error(
+            "Invalid input. Please enter a valid integer for year of birth.");
+      }
+
+      break;
+    } catch (const std::exception &e) {
+      std::cerr << "Error: " << e.what() << std::endl;
+    }
+  }
+  return yearOfBirth;
+}
+
+int main() {
+  std::vector<std::shared_ptr<Player>> players;
+
+  auto createPlayer = [&players]() {
+    int number, height, weight, yearOfBirth;
+    std::string surname, firstName;
+
+    // Ensure the number is unique
+    do {
+      std::cout << "Enter player number: ";
+      std::cin >> number;
+    } while (Player::playerExists(players, number));
+
+    std::cout << "Enter player surname: ";
+    std::cin >> surname;
+
+    std::cout << "Enter player first name: ";
+    std::cin >> firstName;
+
+    std::cout << "Enter player height (in cm): ";
+    height = getHeight();
+
+    std::cout << "Enter player weight (in kg): ";
+    weight = getWeight();
+
+    std::cout << "Enter player year of birth: ";
+    yearOfBirth = getYearOfBirth();
+
+    auto player = std::make_shared<Player>(number, surname, firstName, height,
+                                           weight, yearOfBirth);
+
+    players.push_back(player);
+
+    std::cout << "Player created successfully.\n";
+  };
+
+  auto manageCombatGame = [&players]() {
     int player1Index, player2Index, result;
     std::cout << "Enter the index of the first player: ";
     std::cin >> player1Index;
@@ -96,108 +172,96 @@ void manageCombatGame(std::vector<Player*>& players) {
     std::cout << "Enter the result (0 for lost, 5 for tie, 10 for won): ";
     std::cin >> result;
 
-    if (player1Index < 0 || player1Index >= players.size() || player2Index < 0 || player2Index >= players.size()) {
-        std::cout << "Invalid player indices!" << std::endl;
-        return;
+    if (player1Index < 0 || player1Index >= players.size() ||
+        player2Index < 0 || player2Index >= players.size()) {
+      std::cout << "Invalid player indices!\n";
+      return;
     }
 
-    Player* player1 = players[player1Index];
-    Player* player2 = players[player2Index];
+    auto &player1 = players[player1Index];
+    auto &player2 = players[player2Index];
 
     if (result == 10) {
-        player1->updatePoints(10);
+      player1->updatePoints(10);
     } else if (result == 5) {
-        player1->updatePoints(5);
-        player2->updatePoints(5);
+      player1->updatePoints(5);
+      player2->updatePoints(5);
     } else {
-        player2->updatePoints(10);
+      player2->updatePoints(10);
     }
 
     if (*player1 >= *player2) {
-        std::cout << player1->getFirstName() << " " << player1->getSurname() << " has won. "
-                  << "He is " << player1->getHeight() - player2->getHeight() << " cm taller and "
-                  << player1->getWeight() - player2->getWeight() << " kg heavier than "
-                  << player2->getFirstName() << " " << player2->getSurname() << "." << std::endl;
+      std::cout << player1->getFirstName() << " " << player1->getSurname()
+                << " has won. "
+                << "He is " << player1->getHeight() - player2->getHeight()
+                << " cm taller and "
+                << player1->getWeight() - player2->getWeight()
+                << " kg heavier than " << player2->getFirstName() << " "
+                << player2->getSurname() << ".\n";
     } else {
-        std::cout << player2->getFirstName() << " " << player2->getSurname() << " has won. "
-                  << "He is " << player2->getHeight() - player1->getHeight() << " cm taller and "
-                  << player2->getWeight() - player1->getWeight() << " kg heavier than "
-                  << player1->getFirstName() << " " << player1->getSurname() << "." << std::endl;
+      std::cout << player2->getFirstName() << " " << player2->getSurname()
+                << " has won. "
+                << "He is " << player2->getHeight() - player1->getHeight()
+                << " cm taller and "
+                << player2->getWeight() - player1->getWeight()
+                << " kg heavier than " << player1->getFirstName() << " "
+                << player1->getSurname() << ".\n";
     }
-}
+  };
 
-int main() {
-    std::vector<Player*> players;
-
-    while (true) {
-        std::cout << "\nMENU:" << std::endl;
-        std::cout << "1. Create player" << std::endl;
-        std::cout << "2. Manage combat game" << std::endl;
-        std::cout << "3. Output all players" << std::endl;
-        std::cout << "4. Output winner" << std::endl;
-        std::cout << "5. Exit" << std::endl;
-        std::cout << "Enter your choice: ";
-
-        int choice;
-        std::cin >> choice;
-
-        switch (choice) {
-            case 1: {
-                int number, height, weight, yearOfBirth;
-                std::string surname, firstName;
-
-                std::cout << "Enter player number: ";
-                std::cin >> number;
-
-                std::cout << "Enter player surname: ";
-                std::cin >> surname;
-
-                std::cout << "Enter player first name: ";
-                std::cin >> firstName;
-
-                std::cout << "Enter player height (in cm): ";
-                std::cin >> height;
-
-                std::cout << "Enter player weight (in kg): ";
-                std::cin >> weight;
-
-                std::cout << "Enter player year of birth: ";
-                std::cin >> yearOfBirth;
-
-                players.push_back(new Player(number, surname, firstName, height, weight, yearOfBirth));
-
-                std::cout << "Player created successfully." << std::endl;
-                break;
-            }
-            case 2:
-                manageCombatGame(players);
-                break;
-            case 3:
-                for (const auto& player : players) {
-                    std::cout << *player << std::endl;
-                }
-                break;
-            case 4: {
-                if (players.empty()) {
-                    std::cout << "No players available." << std::endl;
-                } else {
-                    auto winner = std::max_element(players.begin(), players.end(),
-                        [](const Player* a, const Player* b) { return a->getPoints() < b->getPoints(); });
-
-                    std::cout << "Winner: " << *(*winner) << std::endl;
-                }
-                break;
-            }
-            case 5:
-                for (auto player : players) {
-                    delete player;
-                }
-                return 0;
-            default:
-                std::cout << "Invalid choice. Please try again." << std::endl;
-                break;
-        }
+  auto outputAllPlayers = [&players]() {
+    for (const auto &player : players) {
+      std::cout << *player << "\n";
     }
+  };
 
-    return 0;
+  auto outputWinner = [&players]() {
+    if (players.empty()) {
+      std::cout << "No players available.\n";
+    } else {
+      auto winner = std::max_element(players.begin(), players.end(),
+                                     [](const std::shared_ptr<Player> &a,
+                                        const std::shared_ptr<Player> &b) {
+                                       return a->getPoints() < b->getPoints();
+                                     });
+
+      std::cout << "Winner: " << *(*winner) << std::endl;
+    }
+  };
+
+  int choice;
+
+  do {
+    std::cout << "\nMENU:\n";
+    std::cout << "1. Create player\n";
+    std::cout << "2. Manage combat game\n";
+    std::cout << "3. Output all players\n";
+    std::cout << "4. Output winner\n";
+    std::cout << "5. Exit\n";
+    std::cout << "Enter your choice: ";
+
+    choice = getChoice();
+
+    switch (choice) {
+    case 1:
+      createPlayer();
+      break;
+    case 2:
+      manageCombatGame();
+      break;
+    case 3:
+      outputAllPlayers();
+      break;
+    case 4:
+      outputWinner();
+      break;
+    case 5:
+      return 0;
+    default:
+      std::cout << "Invalid choice. Please enter a number between 1 and 5.\n";
+      break;
+    }
+  } while (5 != choice);
+
+  return 0;
 }
